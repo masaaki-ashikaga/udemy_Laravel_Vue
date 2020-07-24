@@ -11,6 +11,7 @@
                     placeholder="Start date"
                     v-model="from"
                     @keyup.enter="check"
+                    :class="[{'is-invalid': this.errorFor('from')}]"
                 >
             </div>
 
@@ -23,6 +24,7 @@
                     placeholder="End date"
                     v-model="to"
                     @keyup.enter="check"
+                    :class="[{'is-invalid': this.errorFor('to')}]"
                 >
             </div>
             <button class="btn btn-secondary btn-block" @click="check" :disabled="loading">Check!</button>
@@ -55,6 +57,20 @@ export default {
                 this.status = error.response.status;
             })
             .then(() => this.loading = false);
+        },
+        errorFor(field){
+            return this.hasErrors && this.errors[field] ? this.errors[field] : null;
+        },
+    },
+    computed: {
+        hasErrors() {
+            return 422 === this.status && this.errors !== null;
+        },
+        hasAvailability() {
+            return 200 === this.status;
+        },
+        noAvailability() {
+            return 400 === this.status;
         }
     }
 }
@@ -66,5 +82,10 @@ export default {
         text-transform: uppercase;
         color: gray;
         stroke-width: bolder;
+    }
+
+    .is-invalid{
+        border-color: #b22222;
+        background-image: none;
     }
 </style>
